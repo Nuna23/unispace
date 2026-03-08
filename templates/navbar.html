@@ -1,0 +1,51 @@
+{% load static %}
+<header class="bg-white shadow">
+    <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+
+            <!-- logo -->
+            <div class="flex-shrink-0">
+                <a href="{% url 'home' %}" class="text-2xl font-bold ml-6">
+                UniSpace
+                </a>
+            </div>
+
+            <!-- searchbar middle -->
+            <div class="flex-1 flex justify-center px-8">
+                <div class="w-full max-w-xl">
+                    <form method="GET" action="{% url 'home' %}">
+                        <input
+                        name="q"
+                        value="{{ request.GET.q }}"
+                        placeholder="Search rooms, facilities, equipment..."
+                        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        />
+                    </form>
+                </div>
+            </div>
+
+            <!-- user/profile dropdown right -->
+            <div class="flex items-center">
+                {% if request.user.is_authenticated %}
+                <div class="relative group">
+                    <button class="flex items-center space-x-2 hover:text-blue-500">
+                        <img
+                        src="https://randomuser.me/api/portraits/men/37.jpg"
+                        class="h-8 w-8 rounded-full"
+                        />
+                        <span class="font-medium">@{{ request.user.email }}</span>
+                    </button>
+
+                    <div class="absolute right-0 mt-0 w-48 bg-white rounded-lg shadow-lg hidden group-hover:block z-60">
+                        <a href="{% url 'user-profile' request.user.id %}" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
+                        <a href="{% url 'logout' %}" class="block px-4 py-2 hover:bg-gray-100">Logout</a>
+                    </div>
+                </div>
+                {% else %}
+                <a href="{% url 'login' %}" class="text-blue-500 font-medium">Login</a>
+                {% endif %}
+        </div>
+
+    </div>
+  </div>
+</header>

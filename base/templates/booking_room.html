@@ -1,0 +1,70 @@
+{% extends 'main.html' %}
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-5 gap-6 p-8">
+    <aside class="col-span-1 bg-gray-100 rounded-lg p-6">
+        <a href="{% url 'home' %}" class="flex items-center space-x-2 mb-6 text-gray-700 hover:text-gray-900">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            <span>Back to Home</span>
+        </a>
+        <nav class="flex flex-col space-y-2">
+            <a class="px-4 py-2 rounded hover:bg-gray-200 {% if not request.GET.filter %} font-medium{% endif %}" href="{% url 'home' %}">All</a>
+            <a class="px-4 py-2 rounded hover:bg-gray-200 {% if request.GET.filter == 'all_rooms' %}bg-blue-100 text-blue-700 font-medium{% endif %}" href="{% url 'home' %}?filter=all_rooms">Rooms</a>
+            <a class="px-4 py-2 rounded hover:bg-gray-200 {% if request.GET.filter == 'all_facilities' %}bg-blue-100 text-blue-700 font-medium{% endif %}" href="{% url 'home' %}?filter=all_facilities">Facilities</a>
+            <a class="px-4 py-2 rounded hover:bg-gray-200 {% if request.GET.filter == 'all_equipment' %}bg-blue-100 text-blue-700 font-medium{% endif %}" href="{% url 'home' %}?filter=all_equipment">Equipment</a>
+        </nav>
+    </aside>
+
+    <section class="col-span-3 bg-white rounded-lg p-6 shadow">
+        <h2 class="text-2xl font-bold mb-4">Book this room</h2>
+        <p class="mb-2">Room {{ room.room_number }}</p>
+        <p class="mb-2">Capacity:{{ room.capacity }} people</p>
+        {% if request.GET.time %}
+        <p class="mb-4 font-medium">Selected timeslot: {{ request.GET.time }}</p>
+        {% endif %}
+        <form method="POST" id="booking-form">
+            {% csrf_token %}
+
+            <div class="mb-4">
+                <label class="block font-medium">Usage date</label>
+                {{ form.usage_date }}
+            </div>
+
+            <div class="mb-4">
+                <label class="block font-medium">Start time</label>
+                {{ form.start_time }}
+            </div>
+
+            <div class="mb-4">
+                <label class="block font-medium">End time</label>
+                {{ form.end_time }}
+            </div>
+
+            <!-- Error section -->
+            {% if form.errors %}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
+
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <button type="submit"
+                onclick="return confirm('Confirm booking this room?')"
+                class="bg-blue-500 text-white rounded px-4 py-2">
+                Submit Booking
+            </button>
+        </form>
+    </section>
+
+    <aside class="col-span-1 hidden md:block bg-gray-100 rounded-lg p-6">
+    </aside>
+</div>
+{% endblock %}

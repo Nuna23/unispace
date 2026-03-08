@@ -1,0 +1,48 @@
+{% extends 'main.html' %}
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-5 gap-6 p-8">
+    <!-- Left Sidebar Menu -->
+    <aside class="col-span-1 bg-gray-100 rounded-lg p-6 sticky top-24">
+        <a href="{% url 'home' %}" class="flex items-center space-x-2 mb-6 text-gray-700 hover:text-gray-900">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            <span>Back to Home</span>
+        </a>
+        <nav class="flex flex-col space-y-2">
+            <a class="px-4 py-2 rounded hover:bg-gray-200" href="{% url 'home' %}">All</a>
+            <a class="px-4 py-2 rounded hover:bg-gray-200" href="{% url 'home' %}?filter=all_rooms">Rooms</a>
+            <a class="px-4 py-2 rounded hover:bg-gray-200" href="{% url 'home' %}?filter=all_facilities">Facilities</a>
+            <a class="px-4 py-2 rounded hover:bg-gray-200" href="{% url 'home' %}?filter=all_equipment">Equipment</a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="col-span-3 border-2 border-gray-200 p-4 rounded-lg">
+        <h1 class="text-2xl font-bold mb-4">Booking Detail</h1>
+        <div class="mb-4">
+            {% if booking.room %}
+                <p><strong>Room:</strong> {{ booking.room.room_number }}</p>
+            {% elif booking.facility %}
+                <p><strong>Facility:</strong> {{ booking.facility.facility_name }}</p>
+            {% else %}
+                <p><strong>Equipment:</strong> {% for eq in booking.equipment.all %} {{ eq.equipment_name }} {% endfor %}</p>
+            {% endif %}
+            <p><strong>Date:</strong> {{ booking.usage_date }}</p>
+            <p><strong>Time:</strong> {{ booking.start_time|time:"H:i" }} - {{ booking.end_time|time:"H:i" }}</p>
+            <p><strong>Attended:</strong> {% if booking.is_attended %}Yes{% else %}No{% endif %}</p>
+        </div>
+        {% if show_qr and not booking.is_attended %}
+        <div class="mb-4">
+            <h2 class="text-lg font-semibold mb-2">Confirm Attendance</h2>
+            <p>Scan the QR code or click the button to confirm your attendance.</p>
+            <img src="data:image/png;base64,{{ qr_code }}" class="mb-2" />
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Mark as Attended</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends 'main.html' %}
+{% block content %}
+<main class="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 max-w-7xl mx-auto">
+    <!-- Left Side - Booking History -->
+    <div class="col-span-2 bg-white p-8 rounded shadow">
+        <h2 class="text-xl font-semibold mb-6">Booking History</h2>
+        {% if bookings %}
+            <div class="space-y-4 max-h-96 overflow-y-auto">
+                {% for booking in bookings %}
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            {% if booking.room %}
+                                <p class="font-medium text-sm">Room: {{ booking.room.room_number }}</p>
+                            {% elif booking.facility %}
+                                <p class="font-medium text-sm">Facility: {{ booking.facility.facility_name }}</p>
+                            {% else %}
+                                <p class="font-medium text-sm">Equipment Booking</p>
+                            {% endif %}
+                        </div>
+                        <span class="text-xs px-2 py-1 rounded {% if booking.is_attended %}bg-green-100 text-green-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                            {% if booking.is_attended %}Attended{% else %}Not Attended{% endif %}
+                        </span>
+                    </div>
+                    <p class="text-sm text-gray-600">Date: {{ booking.usage_date }}</p>
+                    <p class="text-sm text-gray-600">Time: {{ booking.start_time|time:"H:i" }} - {{ booking.end_time|time:"H:i" }}</p>
+                    <p class="text-xs text-gray-500 mt-2">Booked: {{ booking.created_at|date:"M d, Y" }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-gray-600 text-sm">No booking history</p>
+        {% endif %}
+    </div>
+    <!-- Right Side - Profile -->
+    <div class="col-span-3 bg-white p-8 rounded shadow">
+        <div class="flex items-center space-x-2 mb-6">
+            <a href="{% url 'home' %}" class="text-gray-600 hover:text-gray-900">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </a>
+            <h2 class="text-xl font-semibold">Your Profile</h2>
+        </div>
+        
+        {% if not editing %}
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Email</label>
+                <p class="mt-1 text-sm text-gray-900">{{ student.user.email }}</p>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Gender</label>
+                <p class="mt-1 text-sm text-gray-900">{{ student.get_gender_display }}</p>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Faculty</label>
+                <p class="mt-1 text-sm text-gray-900">{{ student.faculty }}</p>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Major</label>
+                <p class="mt-1 text-sm text-gray-900">{{ student.major }}</p>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Year</label>
+                <p class="mt-1 text-sm text-gray-900">{{ student.get_year_display }}</p>
+            </div>
+            <div class="flex justify-between pt-4 border-t">
+                <a href="{% url 'home' %}" class="text-blue-500 hover:underline">Back to Home</a>
+                <a href="?edit=1" class="px-6 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Edit Profile
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <form class="space-y-6" action="" method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+            <div>
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                    <div class="text-red-500 text-sm">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <div class="flex justify-between pt-4 border-t">
+                <a href="{% url 'update-user' %}" class="text-blue-500 hover:underline">Cancel</a>
+                <button type="submit" class="px-6 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Update
+                </button>
+            </div>
+        </form>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}

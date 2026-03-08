@@ -1,0 +1,33 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- <link
+            rel="shortcut icon"
+            href="assets/favicon.ico"
+            type="image/x-icon"
+        /> -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <!-- <link rel="stylesheet" href="{% static 'styles/style.css' %}" /> -->
+        <title>Unispace</title>
+    </head>
+
+    <body>
+        {% if request.path != "/login/" and request.path != "/register/" %}
+        {% include "navbar.html" %} {% endif %}
+        {% if messages %}
+        <div class="max-w-7xl mx-auto mt-4 px-4">
+            {% for message in messages %}
+            <div class="mb-2 p-2 border rounded {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% block content %} {% endblock %}
+        <script src="{% static 'js/script.js' %}"></script>
+    </body>
+</html>
